@@ -17,7 +17,13 @@ class _MyCoopTabState extends State<MyCoopTab> {
   @override
   void initState() {
     super.initState();
-    _productsFuture = ProductService.getAllProducts();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    setState(() {
+      _productsFuture = ProductService.getAllProducts();
+    });
   }
 
   @override
@@ -37,49 +43,53 @@ class _MyCoopTabState extends State<MyCoopTab> {
         final onSaleProducts = allProducts.where((p) => p.onSaleFlag).toList();
         final regularProducts = allProducts.where((p) => !p.onSaleFlag).toList();
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (onSaleProducts.isNotEmpty) ...[
+        return RefreshIndicator(
+          onRefresh: _loadProducts,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(), // cần thiết cho refresh khi ít dữ liệu
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (onSaleProducts.isNotEmpty) ...[
+                  const Text(
+                    'On Sale',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: onSaleProducts.length,
+                      itemBuilder: (context, index) {
+                        return OnSaleProductCard(product: onSaleProducts[index]);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
                 const Text(
-                  'On Sale',
+                  'All Products',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                SizedBox(
-                  height: 200, // chiều cao cố định cho horizontal list
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: onSaleProducts.length,
-                    itemBuilder: (context, index) {
-                      return OnSaleProductCard(product: onSaleProducts[index]);
-                    },
+                GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: regularProducts.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.7,
                   ),
+                  itemBuilder: (context, index) {
+                    return ProductCard(product: regularProducts[index]);
+                  },
                 ),
-                const SizedBox(height: 24),
               ],
-              const Text(
-                'All Products',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: regularProducts.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 0.7, // tỉ lệ chiều rộng/chiều cao card
-                ),
-                itemBuilder: (context, index) {
-                  return ProductCard(product: regularProducts[index]);
-                },
-              ),
-            ],
+            ),
           ),
         );
       },
