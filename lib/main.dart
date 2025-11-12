@@ -5,6 +5,7 @@ import 'core/themes/app_theme.dart';
 import 'core/notifiers/cart_notifier.dart';
 import 'core/notifiers/order_notifier.dart';
 import 'core/services/session_manager.dart';
+import 'viewmodels/auth_view_model.dart';
 import 'ui/screens/home_screen.dart';
 import 'ui/screens/login_screen.dart';
 
@@ -17,6 +18,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => CartNotifier()),
         ChangeNotifierProvider(create: (_) => OrderNotifier()),
+        ChangeNotifierProvider(create: (_) => AuthViewModel()),
       ],
       child: const CoopApp(),
     ),

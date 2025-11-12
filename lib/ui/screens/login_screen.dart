@@ -1,138 +1,65 @@
 import 'package:flutter/material.dart';
-import '../../core/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import '../../viewmodels/auth_view_model.dart';
+import '../widgets/auth_textField.dart';
+import '../widgets/auth_buttons.dart';
+import '../widgets/auth_app_logo.dart';
 import 'sign_up_screen.dart';
 import 'home_screen.dart';
-import '../../data/models/request_model.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _loading = false;
-  String? _error;
-
-  @override
   Widget build(BuildContext context) {
+    final vm = context.watch<AuthViewModel>();
+    final emailCtrl = TextEditingController();
+    final passCtrl = TextEditingController();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Login'), centerTitle: true),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            const CoopLogo(),
+            const SizedBox(height: 30),
+            AuthTextField(controller: emailCtrl, label: 'Email'),
+            const SizedBox(height: 12),
+            AuthTextField(controller: passCtrl, label: 'Password', obscureText: true),
+            const SizedBox(height: 20),
 
-              // 🧩 Logo Coop phía trên TextField
-              Image.asset(
-                'lib/assets/images/coop.png',
-                width: 120,
-                height: 120,
-              ),
+            if (vm.error != null)
+              Text(vm.error!, style: const TextStyle(color: Colors.red)),
 
-              const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
-              // Email TextField
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value!.isEmpty ? 'Enter email' : null,
-              ),
-              const SizedBox(height: 12),
-
-              // Password TextField
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) => value!.isEmpty ? 'Enter password' : null,
-              ),
-              const SizedBox(height: 20),
-
-              // Hiển thị lỗi nếu có
-              if (_error != null)
-                Text(
-                  _error!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              const SizedBox(height: 20),
-
-              // Nút Login
-              _loading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _login,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      child: const Text('Login'),
-                    ),
-              const SizedBox(height: 12),
-
-              // Nút chuyển sang SignUp
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
+            AuthButton(
+              text: 'Login',
+              loading: vm.isLoading,
+              onPressed: () async {
+                final ok = await vm.login(emailCtrl.text, passCtrl.text);
+                if (ok && context.mounted) {
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                    MaterialPageRoute(builder: (_) => const HomeScreen()),
                   );
-                },
-                child: const Text('Don\'t have an account? Sign up'),
+                }
+              },
+            ),
+
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SignUpScreen()),
               ),
-            ],
-          ),
+              child: const Text("Don't have an account? Sign up"),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      final request = SignInRequest(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      final user = await AuthService.signIn(request);
-
-      if (!mounted) return; // bảo vệ context
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-        });
-      }
-    }
   }
 }

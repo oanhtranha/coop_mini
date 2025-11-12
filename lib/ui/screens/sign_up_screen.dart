@@ -1,117 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../viewmodels/auth_view_model.dart';
 import '../../core/services/auth_service.dart';
 import '../../data/models/request_model.dart';
+import '../widgets/auth_textField.dart';
+import '../widgets/auth_buttons.dart';
+import '../widgets/message_dialog.dart';
+import '../widgets/auth_app_logo.dart';
 import 'home_screen.dart';
-import '../../ui/widgets/message_dialog.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends State<SignUpScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _loading = false;
-  String? _error;
-
-  @override
   Widget build(BuildContext context) {
+    final vm = context.watch<AuthViewModel>();
+    final emailCtrl = TextEditingController();
+    final usernameCtrl = TextEditingController();
+    final passwordCtrl = TextEditingController();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
+      appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) => value!.isEmpty ? 'Enter email' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
-                validator: (value) => value!.isEmpty ? 'Enter username' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) => value!.isEmpty ? 'Enter password' : null,
-              ),
-              const SizedBox(height: 20),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: 20),
-              _loading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _signup,
-                      child: const Text('Sign Up'),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            const CoopLogo(),
+            const SizedBox(height: 30),
+            AuthTextField(controller: emailCtrl, label: 'Email'),
+            const SizedBox(height: 12),
+            AuthTextField(controller: usernameCtrl, label: 'Username'),
+            const SizedBox(height: 12),
+            AuthTextField(
+              controller: passwordCtrl,
+              label: 'Password',
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+
+            if (vm.error != null)
+              Text(vm.error!, style: const TextStyle(color: Colors.red)),
+
+            const SizedBox(height: 20),
+
+            AuthButton(
+              text: 'Sign Up',
+              loading: vm.isLoading,
+              onPressed: () async {
+                final ok = await vm.signup(
+                  emailCtrl.text,
+                  usernameCtrl.text,
+                  passwordCtrl.text,
+                );
+
+                if (!context.mounted) return;
+                if (ok) {
+                  await showMessageDialog(context, 'Sign up successful!');
+                  final user = await AuthService.signIn(
+                    SignInRequest(
+                      email: emailCtrl.text,
+                      password: passwordCtrl.text,
                     ),
-            ],
-          ),
+                  );
+
+                  if (user != null && context.mounted) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
   }
-
- Future<void> _signup() async {
-  if (!_formKey.currentState!.validate()) return;
-
-  if (!mounted) return; // bảo vệ context ngay từ đầu
-
-  setState(() {
-    _loading = true;
-    _error = null;
-  });
-
-  try {
-    final request = SignUpRequest(
-      email: _emailController.text,
-      username: _usernameController.text,
-      password: _passwordController.text,
-    );
-    final response = await AuthService.signUp(request);
-
-    if (!mounted || response == null) return; // bảo vệ context trước khi dùng Navigator
-
-    // Hiển thị message alert
-    await showMessageDialog(context, response.message);
-    // Sau khi user bấm OK, login tự động
-    final user = await AuthService.signIn(SignInRequest(
-      email: _emailController.text,
-      password: _passwordController.text,
-    ));
-
-    if (!mounted || user == null) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
-   
-  } catch (e) {
-    if (mounted) {
-      setState(() {
-        _error = e.toString();
-      });
-    }
-  } finally {
-    if (mounted) {
-      setState(() {
-        _loading = false;
-      });
-    }
-  }
-}
-
 }
