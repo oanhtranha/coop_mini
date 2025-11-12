@@ -1,0 +1,42 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Runner/GeneratedPluginRegistrant.*
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Visual Studio Code
+.vscode/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Miscellaneous
+*.log
+*.lock
+*.tmp
+*.swp
+*.DS_Store
+*.class
+*.jar
+
+# Generated files
+gen/
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
