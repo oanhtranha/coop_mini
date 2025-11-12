@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/services/api_client.dart';
 import '../../data/models/cart_item_model.dart';
 import '../../core/services/cart_service.dart';
 import 'checkout_screen.dart';
@@ -138,7 +139,7 @@ class _CartScreenState extends State<CartScreen> {
                                           borderRadius:
                                               BorderRadius.circular(6),
                                           child: Image.network(
-                                            'http://localhost:4000${product.image}',
+                                            '${ApiClient.baseUrl}${product.image}',
                                             width: 60,
                                             height: 60,
                                             fit: BoxFit.cover,

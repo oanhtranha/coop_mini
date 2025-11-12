@@ -1,9 +1,16 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiClient {
-  static final _baseUrl = dotenv.env['API_URL']!;
+  static String get _baseUrl {
+    String url = dotenv.env['API_URL'] ?? 'http://localhost:4000';
+    if (Platform.isAndroid) {
+      url = url.replaceAll('localhost', '10.0.2.2');
+    }
+    return url;
+  }
 
   // GET
   static Future<dynamic> get(String endpoint, {String? token}) async {
@@ -65,4 +72,6 @@ class ApiClient {
       throw Exception(errorMessage);
     }
   }
+
+  static String get baseUrl => _baseUrl;
 }

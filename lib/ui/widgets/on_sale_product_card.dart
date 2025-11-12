@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/services/api_client.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/models/request_model.dart';
 import '../../../core/notifiers/cart_notifier.dart';
@@ -79,7 +80,7 @@ class _OnSaleProductCardState extends State<OnSaleProductCard> {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
-                  'http://localhost:4000${widget.product.image}',
+                  '${ApiClient.baseUrl}${widget.product.image}',
                   width: double.infinity,
                   height: 100,
                   fit: BoxFit.cover,

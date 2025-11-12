@@ -1,3 +1,4 @@
+import 'package:coop_mini/core/services/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/cart_item_model.dart';
@@ -98,7 +99,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: Image.network(
-                                'http://localhost:4000${product.image}',
+                                '${ApiClient.baseUrl}${product.image}',
                                 width: 70,
                                 height: 70,
                                 fit: BoxFit.cover,

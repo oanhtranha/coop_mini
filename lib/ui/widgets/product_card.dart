@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/services/api_client.dart';
 import '../../data/models/product_model.dart';
 import '../../core/services/product_service.dart';
 import '../../data/models/request_model.dart';
@@ -62,7 +63,7 @@ class _ProductCardState extends State<ProductCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                'http://localhost:4000${widget.product.image}',
+                '${ApiClient.baseUrl}${widget.product.image}',
                 height: widget.onSale ? 100 : 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
