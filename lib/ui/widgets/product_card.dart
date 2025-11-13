@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/services/api_client.dart';
 import '../../data/models/product_model.dart';
 import '../../core/services/product_service.dart';
 import '../../data/models/request_model.dart';

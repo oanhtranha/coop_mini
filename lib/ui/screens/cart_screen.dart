@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/services/api_client.dart';
 import '../../data/models/cart_item_model.dart';
 import '../../core/services/cart_service.dart';
 import 'checkout_screen.dart';
