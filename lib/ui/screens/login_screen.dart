@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/auth_view_model.dart';
-import '../widgets/auth_textField.dart';
+import '../widgets/auth_text_field.dart';
 import '../widgets/auth_buttons.dart';
 import '../widgets/auth_app_logo.dart';
 import 'sign_up_screen.dart';

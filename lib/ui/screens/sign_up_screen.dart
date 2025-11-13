@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/auth_view_model.dart';
 import '../../core/services/auth_service.dart';
 import '../../data/models/request_model.dart';
-import '../widgets/auth_textField.dart';
+import '../widgets/auth_text_field.dart';
 import '../widgets/auth_buttons.dart';
 import '../widgets/message_dialog.dart';
 import '../widgets/auth_app_logo.dart';

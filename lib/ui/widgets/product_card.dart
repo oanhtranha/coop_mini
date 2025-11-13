@@ -63,7 +63,7 @@ class _ProductCardState extends State<ProductCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                '${ApiClient.baseUrl}${widget.product.image}',
+                widget.product.image,
                 height: widget.onSale ? 100 : 120,
                 width: double.infinity,
                 fit: BoxFit.cover,

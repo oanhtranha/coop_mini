@@ -139,7 +139,7 @@ class _CartScreenState extends State<CartScreen> {
                                           borderRadius:
                                               BorderRadius.circular(6),
                                           child: Image.network(
-                                            '${ApiClient.baseUrl}${product.image}',
+                                            product.image,
                                             width: 60,
                                             height: 60,
                                             fit: BoxFit.cover,

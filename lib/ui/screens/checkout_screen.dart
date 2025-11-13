@@ -99,7 +99,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: Image.network(
-                                '${ApiClient.baseUrl}${product.image}',
+                                product.image,
                                 width: 70,
                                 height: 70,
                                 fit: BoxFit.cover,

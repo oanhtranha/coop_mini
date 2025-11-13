@@ -80,7 +80,7 @@ class _OnSaleProductCardState extends State<OnSaleProductCard> {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
-                  '${ApiClient.baseUrl}${widget.product.image}',
+                  widget.product.image,
                   width: double.infinity,
                   height: 100,
                   fit: BoxFit.cover,
