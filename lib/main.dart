@@ -6,7 +6,7 @@ import 'core/notifiers/cart_notifier.dart';
 import 'core/notifiers/order_notifier.dart';
 import 'core/services/session_manager.dart';
 import 'viewmodels/auth_view_model.dart';
-import 'ui/screens/home_screen.dart';
+import 'ui/screens/home_screen.dart';  
 import 'ui/screens/login_screen.dart';
 
 Future<void> main() async {
